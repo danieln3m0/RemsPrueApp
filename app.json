@@ -17,10 +17,20 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.remsprueapp"
+      "package": "com.franciscodaniel.remsprueapp",
+      "versionCode": 1,
+      "permissions": [
+        "INTERNET",
+        "ACCESS_NETWORK_STATE"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "2a183084-45c0-4f96-89fc-3e92a2479a01"
+      }
     }
   }
 }

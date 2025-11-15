@@ -1,4 +1,4 @@
-package com.anonymous.remsprueapp;
+package com.franciscodaniel.remsprueapp;
 
 import android.os.Build;
 import android.os.Bundle;

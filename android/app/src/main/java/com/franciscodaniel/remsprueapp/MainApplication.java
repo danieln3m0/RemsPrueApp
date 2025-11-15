@@ -1,4 +1,4 @@
-package com.anonymous.remsprueapp;
+package com.franciscodaniel.remsprueapp;
 
 import android.app.Application;
 import android.content.res.Configuration;

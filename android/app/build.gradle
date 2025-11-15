@@ -81,9 +81,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace 'com.anonymous.remsprueapp'
+    namespace 'com.franciscodaniel.remsprueapp'
     defaultConfig {
-        applicationId 'com.anonymous.remsprueapp'
+        applicationId 'com.franciscodaniel.remsprueapp'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

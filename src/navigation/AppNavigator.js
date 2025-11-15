@@ -1,8 +1,10 @@
 import React from 'react';
+import { TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../context/ThemeContext';
 
 // Importar las vistas
 import HomeScreen from '../views/HomeScreen';
@@ -13,8 +15,28 @@ import EditTableroScreen from '../views/EditTableroScreen';
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
+// Componente para botón de tema
+const ThemeToggleButton = () => {
+  const { toggleTheme, isDark } = useTheme();
+  
+  return (
+    <TouchableOpacity
+      onPress={toggleTheme}
+      style={{ marginRight: 15 }}
+    >
+      <Ionicons 
+        name={isDark ? 'moon' : 'sunny'} 
+        size={24} 
+        color="#fff" 
+      />
+    </TouchableOpacity>
+  );
+};
+
 // Stack Navigator para la pestaña de Tableros (incluye Lista y Edición)
 function TablerosStackNavigator() {
+  const { theme } = useTheme();
+  
   return (
     <Stack.Navigator
       screenOptions={{
@@ -40,13 +62,14 @@ function TablerosStackNavigator() {
         options={{ 
           title: 'Lista de Tableros',
           headerStyle: {
-            backgroundColor: '#FF6F00',
+            backgroundColor: theme.colors.primary,
           },
           headerTintColor: '#fff',
           headerTitleStyle: {
             fontWeight: 'bold',
-            color: '#111',
+            color: theme.colors.buttonText,
           },
+          headerRight: () => <ThemeToggleButton />,
         }}
       />
       <Stack.Screen 
@@ -55,13 +78,14 @@ function TablerosStackNavigator() {
         options={{ 
           title: 'Editar Tablero',
           headerStyle: {
-            backgroundColor: '#FF6F00',
+            backgroundColor: theme.colors.primary,
           },
           headerTintColor: '#fff',
           headerTitleStyle: {
             fontWeight: 'bold',
-            color: '#111',
+            color: theme.colors.buttonText,
           },
+          headerRight: () => <ThemeToggleButton />,
         }}
       />
     </Stack.Navigator>
@@ -70,6 +94,8 @@ function TablerosStackNavigator() {
 
 // Bottom Tab Navigator principal
 function MainTabNavigator() {
+  const { theme } = useTheme();
+  
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -82,15 +108,14 @@ function MainTabNavigator() {
           } else if (route.name === 'Crear') {
             iconName = focused ? 'add-circle' : 'add-circle-outline';
           }
-          // Naranja activo, negro inactivo
-          const iconColor = focused ? '#FF6F00' : '#111';
+          const iconColor = focused ? theme.colors.primary : theme.colors.iconSecondary;
           return <Ionicons name={iconName} size={size} color={iconColor} />;
         },
-        tabBarActiveTintColor: '#FF6F00',
-        tabBarInactiveTintColor: '#111',
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.iconSecondary,
         tabBarStyle: {
-          backgroundColor: '#fff',
-          borderTopColor: '#FF6F00',
+          backgroundColor: theme.colors.cardBackground,
+          borderTopColor: theme.colors.border,
           borderTopWidth: 1,
           paddingBottom: 5,
           paddingTop: 5,
@@ -108,13 +133,14 @@ function MainTabNavigator() {
         options={{
           headerShown: true,
           headerStyle: {
-            backgroundColor: '#FF6F00',
+            backgroundColor: theme.colors.primary,
           },
           headerTintColor: '#fff',
           headerTitleStyle: {
             fontWeight: 'bold',
-            color: '#111',
+            color: theme.colors.buttonText,
           },
+          headerRight: () => <ThemeToggleButton />,
         }}
       />
       <Tab.Screen 
@@ -131,13 +157,14 @@ function MainTabNavigator() {
           headerShown: true,
           title: 'Crear Tablero',
           headerStyle: {
-            backgroundColor: '#FF6F00',
+            backgroundColor: theme.colors.primary,
           },
           headerTintColor: '#fff',
           headerTitleStyle: {
             fontWeight: 'bold',
-            color: '#111',
+            color: theme.colors.buttonText,
           },
+          headerRight: () => <ThemeToggleButton />,
         }}
       />
     </Tab.Navigator>

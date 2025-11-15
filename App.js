@@ -2,6 +2,7 @@ import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import AppNavigator from './src/navigation/AppNavigator';
+import { ThemeProvider } from './src/context/ThemeContext';
 
 // Configurar React Query Client
 const queryClient = new QueryClient({
@@ -18,8 +19,10 @@ const queryClient = new QueryClient({
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AppNavigator />
-      <StatusBar style="auto" />
+      <ThemeProvider>
+        <AppNavigator />
+        <StatusBar style="auto" />
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

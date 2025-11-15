@@ -15,8 +15,10 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
 import { useCreateTablero } from '../hooks/useTableros';
+import { useTheme } from '../context/ThemeContext';
 
 export default function CreateTableroScreen({ navigation }) {
+  const { theme } = useTheme();
   const [formData, setFormData] = useState({
     nombre: '',
     ubicacion: '',
@@ -160,6 +162,8 @@ export default function CreateTableroScreen({ navigation }) {
     );
   };
 
+  const styles = getStyles(theme);
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -180,7 +184,7 @@ export default function CreateTableroScreen({ navigation }) {
           ]}
         >
           <View style={styles.header}>
-            <Ionicons name="add-circle" size={40} color="#FF6F00" />
+            <Ionicons name="add-circle" size={40} color={theme.colors.primary} />
             <Text style={styles.headerTitle}>Nuevo Tablero Eléctrico</Text>
             <Text style={styles.headerSubtitle}>
               Complete los datos del tablero
@@ -195,6 +199,7 @@ export default function CreateTableroScreen({ navigation }) {
             <TextInput
               style={styles.input}
               placeholder="Ej: Tablero Piso 1 - Ala Norte"
+              placeholderTextColor={theme.colors.textSecondary}
               value={formData.nombre}
               onChangeText={(value) => handleInputChange('nombre', value)}
             />
@@ -208,6 +213,7 @@ export default function CreateTableroScreen({ navigation }) {
             <TextInput
               style={styles.input}
               placeholder="Ej: Sala de máquinas, Sótano 1"
+              placeholderTextColor={theme.colors.textSecondary}
               value={formData.ubicacion}
               onChangeText={(value) => handleInputChange('ubicacion', value)}
             />
@@ -260,7 +266,8 @@ export default function CreateTableroScreen({ navigation }) {
             </Text>
             <TextInput
               style={styles.input}
-              placeholder="Ej: 200"
+              placeholder="Ej: 150"
+              placeholderTextColor={theme.colors.textSecondary}
               keyboardType="numeric"
               value={formData.capacidad_amperios}
               onChangeText={(value) => handleInputChange('capacidad_amperios', value)}
@@ -294,6 +301,7 @@ export default function CreateTableroScreen({ navigation }) {
             <TextInput
               style={styles.input}
               placeholder="Ej: Schneider Electric"
+              placeholderTextColor={theme.colors.textSecondary}
               value={formData.marca}
               onChangeText={(value) => handleInputChange('marca', value)}
             />
@@ -321,7 +329,7 @@ export default function CreateTableroScreen({ navigation }) {
               onPress={resetForm}
               disabled={createMutation.isPending}
             >
-              <Ionicons name="refresh" size={20} color="#FF6F00" />
+              <Ionicons name="refresh" size={20} color={theme.colors.primary} />
               <Text style={styles.resetButtonText}>Limpiar Formulario</Text>
             </TouchableOpacity>
           </View>
@@ -335,118 +343,122 @@ export default function CreateTableroScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.colors.background,
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
     padding: 20,
+    paddingBottom: 40,
   },
   formContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 15,
-    padding: 20,
-    shadowColor: '#FF6F00',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 10,
-    elevation: 5,
-    borderTopWidth: 3,
-    borderTopColor: '#FF6F00',
+    backgroundColor: theme.colors.cardBackground,
+    borderRadius: 16,
+    padding: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
   },
   header: {
     alignItems: 'center',
-    marginBottom: 30,
+    marginBottom: 32,
   },
   headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginTop: 10,
+    fontSize: 22,
+    fontWeight: '700',
+    color: theme.colors.text,
+    marginTop: 12,
+    letterSpacing: 0.5,
   },
   headerSubtitle: {
     fontSize: 14,
-    color: '#666',
-    marginTop: 5,
+    color: theme.colors.textSecondary,
+    marginTop: 6,
+    letterSpacing: 0.2,
   },
   inputGroup: {
-    marginBottom: 20,
+    marginBottom: 22,
   },
   label: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
-    color: '#333',
-    marginBottom: 8,
+    color: theme.colors.text,
+    marginBottom: 10,
+    letterSpacing: 0.3,
   },
   required: {
-    color: '#f44336',
+    color: theme.colors.danger,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
+    borderColor: theme.colors.border,
+    borderRadius: 12,
+    padding: 14,
     fontSize: 16,
-    backgroundColor: '#fafafa',
+    backgroundColor: theme.colors.inputBackground,
+    color: theme.colors.text,
   },
   pickerContainer: {
     borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    backgroundColor: '#fafafa',
+    borderColor: theme.colors.border,
+    borderRadius: 12,
+    backgroundColor: theme.colors.inputBackground,
     overflow: 'hidden',
   },
   picker: {
     height: 50,
+    color: theme.colors.text,
   },
   hint: {
-    fontSize: 12,
-    color: '#999',
-    marginTop: 5,
+    fontSize: 11,
+    color: theme.colors.textSecondary,
+    marginTop: 6,
     fontStyle: 'italic',
+    letterSpacing: 0.2,
   },
   buttonContainer: {
-    marginTop: 20,
-    gap: 10,
+    marginTop: 28,
+    gap: 12,
   },
   button: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 15,
+    padding: 16,
     borderRadius: 12,
     gap: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 4,
   },
   submitButton: {
-    backgroundColor: '#2196F3',
+    backgroundColor: theme.colors.secondary,
   },
   buttonText: {
-    color: 'white',
+    color: theme.colors.buttonText,
     fontSize: 16,
     fontWeight: '600',
+    letterSpacing: 0.5,
   },
   resetButton: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.colors.cardBackground,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: theme.colors.border,
   },
   resetButtonText: {
-    color: '#666',
+    color: theme.colors.textSecondary,
     fontSize: 16,
     fontWeight: '600',
+    letterSpacing: 0.5,
   },
   requiredNote: {
     fontSize: 12,
-    color: '#666',
+    color: theme.colors.textSecondary,
     marginTop: 15,
     textAlign: 'center',
   },

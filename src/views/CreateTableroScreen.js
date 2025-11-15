@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -27,6 +27,7 @@ export default function CreateTableroScreen({ navigation }) {
   });
   
   const [loading, setLoading] = useState(false);
+  const [pendingSubmit, setPendingSubmit] = useState(false);
 
   // Actualizar valores del formulario
   const handleInputChange = (field, value) => {
@@ -82,16 +83,11 @@ export default function CreateTableroScreen({ navigation }) {
     });
   };
 
-  // Enviar formulario
-  const handleSubmit = async () => {
-    if (!validateForm()) {
-      return;
-    }
-
+  // Lógica real de creación
+  const submitCreate = async () => {
     try {
       setLoading(true);
-      await TableroController.createTablero(formData);
-      
+      const res = await TableroController.createTablero(formData);
       Alert.alert(
         'Éxito',
         'Tablero creado correctamente',
@@ -100,7 +96,6 @@ export default function CreateTableroScreen({ navigation }) {
             text: 'OK',
             onPress: () => {
               resetForm();
-              // Navegar a la lista de tableros
               navigation.navigate('Tableros', { screen: 'TablerosList' });
             },
           },
@@ -110,7 +105,36 @@ export default function CreateTableroScreen({ navigation }) {
       Alert.alert('Error', error.message || 'No se pudo crear el tablero');
     } finally {
       setLoading(false);
+      setPendingSubmit(false);
     }
+  };
+
+  useEffect(() => {
+    if (pendingSubmit) {
+      submitCreate();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingSubmit]);
+
+  // Enviar formulario
+  const handleSubmit = () => {
+    if (!validateForm()) {
+      return;
+    }
+    Alert.alert(
+      'Confirmar Creación',
+      '¿Está seguro de que desea crear este tablero?',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel',
+        },
+        {
+          text: 'Confirmar',
+          onPress: () => setPendingSubmit(true),
+        },
+      ]
+    );
   };
 
   return (

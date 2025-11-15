@@ -86,16 +86,11 @@ export default function EditTableroScreen({ route, navigation }) {
     return true;
   };
 
-  // Enviar formulario
-  const handleSubmit = async () => {
-    if (!validateForm()) {
-      return;
-    }
-
+  // Lógica real de edición
+  const submitEdit = async () => {
     try {
       setLoading(true);
       await TableroController.updateTablero(tablero.id, formData);
-      
       Alert.alert(
         'Éxito',
         'Tablero actualizado correctamente',
@@ -103,7 +98,6 @@ export default function EditTableroScreen({ route, navigation }) {
           {
             text: 'OK',
             onPress: () => {
-              // Navegar de regreso a la lista de tableros
               navigation.navigate('TablerosList');
             },
           },
@@ -114,6 +108,27 @@ export default function EditTableroScreen({ route, navigation }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Enviar formulario
+  const handleSubmit = () => {
+    if (!validateForm()) {
+      return;
+    }
+    Alert.alert(
+      'Confirmar Actualización',
+      '¿Está seguro de que desea guardar los cambios?',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel',
+        },
+        {
+          text: 'Confirmar',
+          onPress: submitEdit,
+        },
+      ]
+    );
   };
 
   // Cancelar y volver atrás

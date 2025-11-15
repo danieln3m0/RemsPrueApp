@@ -1,31 +1,59 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   Image,
+  Animated,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function HomeScreen() {
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.9)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        tension: 20,
+        friction: 7,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.content}>
+      <Animated.View 
+        style={[
+          styles.content,
+          {
+            opacity: fadeAnim,
+            transform: [{ scale: scaleAnim }],
+          },
+        ]}
+      >
         {/* Avatar/Icono del perfil */}
         <View style={styles.avatarContainer}>
           <Ionicons name="person-circle" size={120} color="#FF6F00" />
         </View>
 
-        {/* Información del candidato */}
+        {/* Información personal */}
         <View style={styles.infoCard}>
-          <Text style={styles.title}>Información del Candidato</Text>
+          <Text style={styles.title}>Información personal</Text>
           
           <View style={styles.infoRow}>
             <Ionicons name="person" size={24} color="#FF6F00" />
             <View style={styles.infoText}>
               <Text style={styles.label}>Nombre Completo</Text>
-              <Text style={styles.value}>Francis Daniel Nemocón</Text>
+              <Text style={styles.value}>Francis Daniel Mamani Silva</Text>
             </View>
           </View>
 
@@ -33,7 +61,7 @@ export default function HomeScreen() {
             <Ionicons name="mail" size={24} color="#FF6F00" />
             <View style={styles.infoText}>
               <Text style={styles.label}>Correo Electrónico</Text>
-              <Text style={styles.value}>francis.nemocon@ejemplo.com</Text>
+              <Text style={styles.value}>francisdani@gmail.com</Text>
             </View>
           </View>
         </View>
@@ -106,7 +134,7 @@ export default function HomeScreen() {
             </View>
           </View>
         </View>
-      </View>
+      </Animated.View>
     </ScrollView>
   );
 }
@@ -125,14 +153,16 @@ const styles = StyleSheet.create({
   },
   infoCard: {
     backgroundColor: 'white',
-    borderRadius: 10,
+    borderRadius: 15,
     padding: 20,
     marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowColor: '#FF6F00',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
+    borderLeftWidth: 4,
+    borderLeftColor: '#FF6F00',
   },
   title: {
     fontSize: 22,
@@ -162,14 +192,16 @@ const styles = StyleSheet.create({
   },
   profileCard: {
     backgroundColor: 'white',
-    borderRadius: 10,
+    borderRadius: 15,
     padding: 20,
     marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowColor: '#FF6F00',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
+    borderLeftWidth: 4,
+    borderLeftColor: '#FF6F00',
   },
   sectionTitle: {
     fontSize: 18,
@@ -201,14 +233,16 @@ const styles = StyleSheet.create({
   },
   skillsCard: {
     backgroundColor: 'white',
-    borderRadius: 10,
+    borderRadius: 15,
     padding: 20,
     marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowColor: '#FF6F00',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
+    borderLeftWidth: 4,
+    borderLeftColor: '#FF6F00',
   },
   skillsContainer: {
     flexDirection: 'row',
@@ -221,6 +255,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 8,
     margin: 5,
+    borderWidth: 1,
+    borderColor: '#FF6F00',
+    shadowColor: '#FF6F00',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   skillText: {
     color: '#FF6F00',

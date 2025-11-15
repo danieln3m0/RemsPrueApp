@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -10,10 +10,11 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  Animated,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
-import TableroController from '../controllers/TableroController';
+import { useCreateTablero } from '../hooks/useTableros';
 
 export default function CreateTableroScreen({ navigation }) {
   const [formData, setFormData] = useState({
@@ -26,8 +27,30 @@ export default function CreateTableroScreen({ navigation }) {
     marca: '',
   });
   
-  const [loading, setLoading] = useState(false);
   const [pendingSubmit, setPendingSubmit] = useState(false);
+  
+  // React Query mutation
+  const createMutation = useCreateTablero();
+  
+  // Animaciones
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(50)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+      Animated.spring(slideAnim, {
+        toValue: 0,
+        tension: 20,
+        friction: 7,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
 
   // Actualizar valores del formulario
   const handleInputChange = (field, value) => {
@@ -83,30 +106,30 @@ export default function CreateTableroScreen({ navigation }) {
     });
   };
 
-  // Lógica real de creación
-  const submitCreate = async () => {
-    try {
-      setLoading(true);
-      const res = await TableroController.createTablero(formData);
-      Alert.alert(
-        'Éxito',
-        'Tablero creado correctamente',
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              resetForm();
-              navigation.navigate('Tableros', { screen: 'TablerosList' });
+  // Lógica real de creación con React Query
+  const submitCreate = () => {
+    createMutation.mutate(formData, {
+      onSuccess: () => {
+        Alert.alert(
+          'Éxito',
+          'Tablero creado correctamente',
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                resetForm();
+                navigation.navigate('Tableros', { screen: 'TablerosList' });
+              },
             },
-          },
-        ]
-      );
-    } catch (error) {
-      Alert.alert('Error', error.message || 'No se pudo crear el tablero');
-    } finally {
-      setLoading(false);
-      setPendingSubmit(false);
-    }
+          ]
+        );
+        setPendingSubmit(false);
+      },
+      onError: (error) => {
+        Alert.alert('Error', error.message || 'No se pudo crear el tablero');
+        setPendingSubmit(false);
+      },
+    });
   };
 
   useEffect(() => {
@@ -147,7 +170,15 @@ export default function CreateTableroScreen({ navigation }) {
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.formContainer}>
+        <Animated.View 
+          style={[
+            styles.formContainer,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            },
+          ]}
+        >
           <View style={styles.header}>
             <Ionicons name="add-circle" size={40} color="#FF6F00" />
             <Text style={styles.headerTitle}>Nuevo Tablero Eléctrico</Text>
@@ -273,9 +304,9 @@ export default function CreateTableroScreen({ navigation }) {
             <TouchableOpacity
               style={[styles.button, styles.submitButton]}
               onPress={handleSubmit}
-              disabled={loading}
+              disabled={createMutation.isPending}
             >
-              {loading ? (
+              {createMutation.isPending ? (
                 <ActivityIndicator color="white" />
               ) : (
                 <>
@@ -288,7 +319,7 @@ export default function CreateTableroScreen({ navigation }) {
             <TouchableOpacity
               style={[styles.button, styles.resetButton]}
               onPress={resetForm}
-              disabled={loading}
+              disabled={createMutation.isPending}
             >
               <Ionicons name="refresh" size={20} color="#FF6F00" />
               <Text style={styles.resetButtonText}>Limpiar Formulario</Text>
@@ -298,7 +329,7 @@ export default function CreateTableroScreen({ navigation }) {
           <Text style={styles.requiredNote}>
             <Text style={styles.required}>*</Text> Campos obligatorios
           </Text>
-        </View>
+        </Animated.View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -316,14 +347,16 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   formContainer: {
-    backgroundColor: 'white',
-    borderRadius: 10,
+    backgroundColor: '#fff',
+    borderRadius: 15,
     padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowColor: '#FF6F00',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    elevation: 5,
+    borderTopWidth: 3,
+    borderTopColor: '#FF6F00',
   },
   header: {
     alignItems: 'center',
@@ -385,8 +418,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 15,
-    borderRadius: 8,
+    borderRadius: 12,
     gap: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 4,
   },
   submitButton: {
     backgroundColor: '#2196F3',

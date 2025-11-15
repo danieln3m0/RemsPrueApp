@@ -16,18 +16,36 @@ const Stack = createStackNavigator();
 // Stack Navigator para la pestaña de Tableros (incluye Lista y Edición)
 function TablerosStackNavigator() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        cardStyleInterpolator: ({ current, layouts }) => {
+          return {
+            cardStyle: {
+              transform: [
+                {
+                  translateX: current.progress.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [layouts.screen.width, 0],
+                  }),
+                },
+              ],
+            },
+          };
+        },
+      }}
+    >
       <Stack.Screen 
         name="TablerosList" 
         component={TablerosListScreen}
         options={{ 
           title: 'Lista de Tableros',
           headerStyle: {
-            backgroundColor: '#2196F3',
+            backgroundColor: '#FF6F00',
           },
           headerTintColor: '#fff',
           headerTitleStyle: {
             fontWeight: 'bold',
+            color: '#111',
           },
         }}
       />
@@ -37,11 +55,12 @@ function TablerosStackNavigator() {
         options={{ 
           title: 'Editar Tablero',
           headerStyle: {
-            backgroundColor: '#2196F3',
+            backgroundColor: '#FF6F00',
           },
           headerTintColor: '#fff',
           headerTitleStyle: {
             fontWeight: 'bold',
+            color: '#111',
           },
         }}
       />
@@ -56,7 +75,6 @@ function MainTabNavigator() {
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
-
           if (route.name === 'Inicio') {
             iconName = focused ? 'home' : 'home-outline';
           } else if (route.name === 'Tableros') {
@@ -64,12 +82,16 @@ function MainTabNavigator() {
           } else if (route.name === 'Crear') {
             iconName = focused ? 'add-circle' : 'add-circle-outline';
           }
-
-          return <Ionicons name={iconName} size={size} color={color} />;
+          // Naranja activo, negro inactivo
+          const iconColor = focused ? '#FF6F00' : '#111';
+          return <Ionicons name={iconName} size={size} color={iconColor} />;
         },
-        tabBarActiveTintColor: '#2196F3',
-        tabBarInactiveTintColor: 'gray',
+        tabBarActiveTintColor: '#FF6F00',
+        tabBarInactiveTintColor: '#111',
         tabBarStyle: {
+          backgroundColor: '#fff',
+          borderTopColor: '#FF6F00',
+          borderTopWidth: 1,
           paddingBottom: 5,
           paddingTop: 5,
           height: 60,
@@ -86,11 +108,12 @@ function MainTabNavigator() {
         options={{
           headerShown: true,
           headerStyle: {
-            backgroundColor: '#2196F3',
+            backgroundColor: '#FF6F00',
           },
           headerTintColor: '#fff',
           headerTitleStyle: {
             fontWeight: 'bold',
+            color: '#111',
           },
         }}
       />
@@ -108,11 +131,12 @@ function MainTabNavigator() {
           headerShown: true,
           title: 'Crear Tablero',
           headerStyle: {
-            backgroundColor: '#2196F3',
+            backgroundColor: '#FF6F00',
           },
           headerTintColor: '#fff',
           headerTitleStyle: {
             fontWeight: 'bold',
+            color: '#111',
           },
         }}
       />

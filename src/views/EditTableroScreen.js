@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -10,10 +10,11 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  Animated,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
-import TableroController from '../controllers/TableroController';
+import { useUpdateTablero } from '../hooks/useTableros';
 
 export default function EditTableroScreen({ route, navigation }) {
   const { tablero } = route.params;
@@ -28,7 +29,28 @@ export default function EditTableroScreen({ route, navigation }) {
     marca: '',
   });
   
-  const [loading, setLoading] = useState(false);
+  // React Query mutation
+  const updateMutation = useUpdateTablero();
+  
+  // Animaciones
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(50)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+      Animated.spring(slideAnim, {
+        toValue: 0,
+        tension: 20,
+        friction: 7,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
 
   // Cargar los datos del tablero al montar el componente
   useEffect(() => {
@@ -86,28 +108,30 @@ export default function EditTableroScreen({ route, navigation }) {
     return true;
   };
 
-  // Lógica real de edición
-  const submitEdit = async () => {
-    try {
-      setLoading(true);
-      await TableroController.updateTablero(tablero.id, formData);
-      Alert.alert(
-        'Éxito',
-        'Tablero actualizado correctamente',
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              navigation.navigate('TablerosList');
-            },
-          },
-        ]
-      );
-    } catch (error) {
-      Alert.alert('Error', error.message || 'No se pudo actualizar el tablero');
-    } finally {
-      setLoading(false);
-    }
+  // Lógica real de edición con React Query
+  const submitEdit = () => {
+    updateMutation.mutate(
+      { id: tablero.id, data: formData },
+      {
+        onSuccess: () => {
+          Alert.alert(
+            'Éxito',
+            'Tablero actualizado correctamente',
+            [
+              {
+                text: 'OK',
+                onPress: () => {
+                  navigation.navigate('TablerosList');
+                },
+              },
+            ]
+          );
+        },
+        onError: (error) => {
+          Alert.alert('Error', error.message || 'No se pudo actualizar el tablero');
+        },
+      }
+    );
   };
 
   // Enviar formulario
@@ -159,7 +183,15 @@ export default function EditTableroScreen({ route, navigation }) {
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.formContainer}>
+        <Animated.View 
+          style={[
+            styles.formContainer,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            },
+          ]}
+        >
           <View style={styles.header}>
             <Ionicons name="create" size={40} color="#FF6F00" />
             <Text style={styles.headerTitle}>Editar Tablero</Text>
@@ -291,9 +323,9 @@ export default function EditTableroScreen({ route, navigation }) {
             <TouchableOpacity
               style={[styles.button, styles.submitButton]}
               onPress={handleSubmit}
-              disabled={loading}
+              disabled={updateMutation.isPending}
             >
-              {loading ? (
+              {updateMutation.isPending ? (
                 <ActivityIndicator color="white" />
               ) : (
                 <>
@@ -306,7 +338,7 @@ export default function EditTableroScreen({ route, navigation }) {
             <TouchableOpacity
               style={[styles.button, styles.cancelButton]}
               onPress={handleCancel}
-              disabled={loading}
+              disabled={updateMutation.isPending}
             >
               <Ionicons name="close-circle" size={20} color="#FF6F00" />
               <Text style={styles.cancelButtonText}>Cancelar</Text>
@@ -316,7 +348,7 @@ export default function EditTableroScreen({ route, navigation }) {
           <Text style={styles.requiredNote}>
             <Text style={styles.required}>*</Text> Campos obligatorios
           </Text>
-        </View>
+        </Animated.View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -334,14 +366,16 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   formContainer: {
-    backgroundColor: 'white',
-    borderRadius: 10,
+    backgroundColor: '#fff',
+    borderRadius: 15,
     padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowColor: '#FF6F00',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    elevation: 5,
+    borderTopWidth: 3,
+    borderTopColor: '#FF6F00',
   },
   header: {
     alignItems: 'center',
@@ -422,8 +456,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 15,
-    borderRadius: 8,
+    borderRadius: 12,
     gap: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 4,
   },
   submitButton: {
     backgroundColor: '#4CAF50',

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -9,47 +9,30 @@ import {
   ActivityIndicator,
   RefreshControl,
   Platform,
+  Animated,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
-import TableroController from '../controllers/TableroController';
+import { useTableros, useDeleteTablero } from '../hooks/useTableros';
 
 export default function TablerosListScreen({ navigation }) {
-  const [tableros, setTableros] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-
-  // Cargar tableros al montar el componente
-  useEffect(() => {
-    loadTableros();
-  }, []);
+  // React Query hooks
+  const { data: tableros = [], isLoading, isError, error, refetch } = useTableros();
+  const deleteMutation = useDeleteTablero();
 
   // Recargar tableros cada vez que la pantalla obtiene el foco
   useFocusEffect(
     useCallback(() => {
-      loadTableros();
-    }, [])
+      refetch();
+    }, [refetch])
   );
 
-  // Función para cargar todos los tableros
-  const loadTableros = async () => {
-    try {
-      setLoading(true);
-      const data = await TableroController.getAllTableros();
-      setTableros(data);
-    } catch (error) {
-      Alert.alert('Error', error.message || 'No se pudieron cargar los tableros');
-    } finally {
-      setLoading(false);
+  // Mostrar error si ocurre
+  useEffect(() => {
+    if (isError) {
+      Alert.alert('Error', error?.message || 'No se pudieron cargar los tableros');
     }
-  };
-
-  // Función para refrescar la lista (pull to refresh)
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await loadTableros();
-    setRefreshing(false);
-  };
+  }, [isError, error]);
 
   // Función para eliminar un tablero
   const handleDelete = async (tablero) => {
@@ -79,27 +62,24 @@ export default function TablerosListScreen({ navigation }) {
       return;
     }
     
-    try {
-      console.log('Eliminando tablero con ID:', tablero.id);
-      await TableroController.deleteTablero(tablero.id);
-      
-      if (Platform.OS === 'web') {
-        alert('Tablero eliminado correctamente');
-      } else {
-        Alert.alert('Éxito', 'Tablero eliminado correctamente');
-      }
-      
-      // Recargar la lista
-      loadTableros();
-    } catch (error) {
-      console.error('Error al eliminar:', error);
-      
-      if (Platform.OS === 'web') {
-        alert(`Error al eliminar: ${error.message || 'No se pudo eliminar el tablero'}`);
-      } else {
-        Alert.alert('Error al eliminar', error.message || 'No se pudo eliminar el tablero');
-      }
-    }
+    // Usar React Query mutation para eliminar
+    deleteMutation.mutate(tablero.id, {
+      onSuccess: () => {
+        if (Platform.OS === 'web') {
+          alert('Tablero eliminado correctamente');
+        } else {
+          Alert.alert('Éxito', 'Tablero eliminado correctamente');
+        }
+      },
+      onError: (error) => {
+        console.error('Error al eliminar:', error);
+        if (Platform.OS === 'web') {
+          alert(`Error al eliminar: ${error.message || 'No se pudo eliminar el tablero'}`);
+        } else {
+          Alert.alert('Error al eliminar', error.message || 'No se pudo eliminar el tablero');
+        }
+      },
+    });
   };
 
   // Función para navegar a la pantalla de edición
@@ -107,69 +87,107 @@ export default function TablerosListScreen({ navigation }) {
     navigation.navigate('EditTablero', { tablero });
   };
 
-  // Renderizar cada ítem de la lista
-  const renderTablero = ({ item }) => (
-    <View style={styles.card}>
-      <View style={styles.cardHeader}>
-        <Ionicons name="flash" size={24} color="#FF6F00" />
-        <Text style={styles.cardTitle}>{item.nombre}</Text>
-      </View>
-      
-      <View style={styles.cardBody}>
-        <View style={styles.infoRow}>
-          <Ionicons name="location" size={16} color="#111" />
-          <Text style={styles.infoText}>{item.ubicacion}</Text>
+  // Componente de tarjeta con animación
+  const AnimatedTableroCard = ({ item, index }) => {
+    const fadeAnim = useRef(new Animated.Value(0)).current;
+    const scaleAnim = useRef(new Animated.Value(0.9)).current;
+
+    useEffect(() => {
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 400,
+          delay: index * 80,
+          useNativeDriver: true,
+        }),
+        Animated.spring(scaleAnim, {
+          toValue: 1,
+          tension: 50,
+          friction: 7,
+          delay: index * 80,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }, []);
+
+    return (
+      <Animated.View 
+        style={[
+          styles.card,
+          {
+            opacity: fadeAnim,
+            transform: [{ scale: scaleAnim }],
+          },
+        ]}
+      >
+        <View style={styles.cardHeader}>
+          <Ionicons name="flash" size={24} color="#FF6F00" />
+          <Text style={styles.cardTitle}>{item.nombre}</Text>
         </View>
-        
-        {item.estado && (
+      
+        <View style={styles.cardBody}>
           <View style={styles.infoRow}>
-            <Ionicons name="information-circle" size={16} color="#FF6F00" />
-            <Text style={styles.infoText}>Estado: {item.estado}</Text>
+            <Ionicons name="location" size={16} color="#111" />
+            <Text style={styles.infoText}>{item.ubicacion}</Text>
           </View>
-        )}
-        
-        {item.capacidad_amperios && (
-          <View style={styles.infoRow}>
-            <Ionicons name="speedometer" size={16} color="#111" />
-            <Text style={styles.infoText}>{item.capacidad_amperios} A</Text>
-          </View>
-        )}
-        
-        {item.marca && (
-          <View style={styles.infoRow}>
-            <Ionicons name="pricetag" size={16} color="#FF6F00" />
-            <Text style={styles.infoText}>{item.marca}</Text>
-          </View>
-        )}
-        
-        {(item.ano_fabricacion || item.ano_instalacion) && (
-          <View style={styles.infoRow}>
-            <Ionicons name="calendar" size={16} color="#FF6F00" />
-            <Text style={styles.infoText}>
-              Fab: {item.ano_fabricacion || 'N/A'} | Inst: {item.ano_instalacion || 'N/A'}
-            </Text>
-          </View>
-        )}
-      </View>
+          
+          {item.estado && (
+            <View style={styles.infoRow}>
+              <Ionicons name="information-circle" size={16} color="#FF6F00" />
+              <Text style={styles.infoText}>Estado: {item.estado}</Text>
+            </View>
+          )}
+          
+          {item.capacidad_amperios && (
+            <View style={styles.infoRow}>
+              <Ionicons name="speedometer" size={16} color="#111" />
+              <Text style={styles.infoText}>{item.capacidad_amperios} A</Text>
+            </View>
+          )}
+          
+          {item.marca && (
+            <View style={styles.infoRow}>
+              <Ionicons name="pricetag" size={16} color="#FF6F00" />
+              <Text style={styles.infoText}>{item.marca}</Text>
+            </View>
+          )}
+          
+          {(item.ano_fabricacion || item.ano_instalacion) && (
+            <View style={styles.infoRow}>
+              <Ionicons name="calendar" size={16} color="#FF6F00" />
+              <Text style={styles.infoText}>
+                Fab: {item.ano_fabricacion || 'N/A'} | Inst: {item.ano_instalacion || 'N/A'}
+              </Text>
+            </View>
+          )}
+        </View>
 
-      <View style={styles.cardActions}>
-        <TouchableOpacity
-          style={[styles.button, styles.editButton]}
-          onPress={() => handleEdit(item)}
-        >
-          <Ionicons name="create" size={20} color="white" />
-          <Text style={styles.buttonText}>Editar</Text>
-        </TouchableOpacity>
+        <View style={styles.cardActions}>
+          <TouchableOpacity
+            style={[styles.button, styles.editButton]}
+            onPress={() => handleEdit(item)}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="create" size={20} color="white" />
+            <Text style={styles.buttonText}>Editar</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.button, styles.deleteButton]}
-          onPress={() => handleDelete(item)}
-        >
-          <Ionicons name="trash" size={20} color="white" />
-          <Text style={styles.buttonText}>Eliminar</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+          <TouchableOpacity
+            style={[styles.button, styles.deleteButton]}
+            onPress={() => handleDelete(item)}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="trash" size={20} color="white" />
+            <Text style={styles.buttonText}>Eliminar</Text>
+          </TouchableOpacity>
+        </View>
+      </Animated.View>
+    );
+  };
+
+  // Renderizar cada ítem de la lista
+  const renderTablero = ({ item, index }) => (
+    <AnimatedTableroCard item={item} index={index} />
   );
 
   // Componente cuando la lista está vacía
@@ -183,10 +201,10 @@ export default function TablerosListScreen({ navigation }) {
     </View>
   );
 
-  if (loading) {
+  if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#2196F3" />
+        <ActivityIndicator size="large" color="#FF6F00" />
         <Text style={styles.loadingText}>Cargando tableros...</Text>
       </View>
     );
@@ -202,9 +220,10 @@ export default function TablerosListScreen({ navigation }) {
         ListEmptyComponent={renderEmptyList}
         refreshControl={
           <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={['#2196F3']}
+            refreshing={deleteMutation.isPending}
+            onRefresh={refetch}
+            colors={['#FF6F00']}
+            tintColor="#FF6F00"
           />
         }
       />
@@ -233,15 +252,17 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
   },
   card: {
-    backgroundColor: 'white',
-    borderRadius: 10,
+    backgroundColor: '#fff',
+    borderRadius: 12,
     padding: 15,
     marginBottom: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowColor: '#FF6F00',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
+    borderLeftWidth: 4,
+    borderLeftColor: '#FF6F00',
   },
   cardHeader: {
     flexDirection: 'row',
@@ -282,8 +303,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 10,
     gap: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   editButton: {
     backgroundColor: '#2196F3',

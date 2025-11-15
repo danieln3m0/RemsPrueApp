@@ -21,16 +21,18 @@ const queryClient = new QueryClient({
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
 
-  if (isLoading) {
-    return <SplashScreen onFinish={() => setIsLoading(false)} />;
-  }
-
   return (
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
         <ThemeProvider>
-          <AppNavigator />
-          <StatusBar style="auto" />
+          {isLoading ? (
+            <SplashScreen onFinish={() => setIsLoading(false)} />
+          ) : (
+            <>
+              <AppNavigator />
+              <StatusBar style="auto" />
+            </>
+          )}
         </ThemeProvider>
       </LanguageProvider>
     </QueryClientProvider>

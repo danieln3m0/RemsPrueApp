@@ -1,10 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../context/ThemeContext';
 
 const { width, height } = Dimensions.get('window');
 
 const SplashScreen = ({ onFinish }) => {
+  const { theme } = useTheme();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.3)).current;
   const rotateAnim = useRef(new Animated.Value(0)).current;
@@ -57,7 +59,7 @@ const SplashScreen = ({ onFinish }) => {
   });
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <Animated.View
         style={[
           styles.content,
@@ -68,18 +70,19 @@ const SplashScreen = ({ onFinish }) => {
         ]}
       >
         <Animated.View style={{ transform: [{ rotate: spin }] }}>
-          <Ionicons name="flash" size={80} color="#FF6F00" />
+          <Ionicons name="flash" size={80} color={theme.colors.primary} />
         </Animated.View>
         
-        <Text style={styles.title}>Tableros Eléctricos</Text>
-        <Text style={styles.subtitle}>Sistema de Gestión</Text>
+        <Text style={[styles.title, { color: theme.colors.text }]}>Tableros Eléctricos</Text>
+        <Text style={[styles.subtitle, { color: theme.colors.primary }]}>Sistema de Gestión</Text>
         
         <Animated.View style={[styles.loadingContainer, { opacity: fadeAnim }]}>
-          <View style={styles.loadingBar}>
+          <View style={[styles.loadingBar, { backgroundColor: `${theme.colors.primary}33` }]}>
             <Animated.View
               style={[
                 styles.loadingProgress,
                 {
+                  backgroundColor: theme.colors.primary,
                   transform: [{
                     scaleX: rotateAnim.interpolate({
                       inputRange: [0, 1],
@@ -93,8 +96,8 @@ const SplashScreen = ({ onFinish }) => {
         </Animated.View>
       </Animated.View>
 
-      <Animated.Text style={[styles.footer, { opacity: fadeAnim }]}>
-        Powered by React Native
+      <Animated.Text style={[styles.footer, { opacity: fadeAnim, color: theme.colors.textSecondary }]}>
+        Powered by Francis D.
       </Animated.Text>
     </View>
   );
@@ -103,7 +106,6 @@ const SplashScreen = ({ onFinish }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -114,14 +116,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#FFFFFF',
     marginTop: 30,
     letterSpacing: 1,
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
-    color: '#FF6F00',
     marginTop: 8,
     letterSpacing: 2,
     textTransform: 'uppercase',
@@ -133,14 +133,12 @@ const styles = StyleSheet.create({
   },
   loadingBar: {
     height: 4,
-    backgroundColor: 'rgba(255, 111, 0, 0.2)',
     borderRadius: 2,
     overflow: 'hidden',
   },
   loadingProgress: {
     height: '100%',
     width: '100%',
-    backgroundColor: '#FF6F00',
     borderRadius: 2,
     transformOrigin: 'left',
   },
@@ -148,7 +146,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 50,
     fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.5)',
     letterSpacing: 1,
   },
 });

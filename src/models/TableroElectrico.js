@@ -1,19 +1,27 @@
 // Modelo para Tablero Eléctrico
 export class TableroElectrico {
   constructor(data = {}) {
-    this.id = data.id || null;
+    this.id = data.id || data._id || null;
     this.nombre = data.nombre || '';
     this.ubicacion = data.ubicacion || '';
-    this.voltaje = data.voltaje || '';
-    this.capacidad = data.capacidad || '';
+    this.ano_fabricacion = data.ano_fabricacion || '';
+    this.ano_instalacion = data.ano_instalacion || '';
+    this.capacidad_amperios = data.capacidad_amperios || '';
+    this.estado = data.estado || '';
     this.marca = data.marca || '';
-    this.modelo = data.modelo || '';
-    this.fecha_instalacion = data.fecha_instalacion || '';
   }
 
   // Validación básica
   isValid() {
-    return this.nombre && this.ubicacion && this.voltaje;
+    return (
+      this.nombre &&
+      this.ubicacion &&
+      this.ano_fabricacion &&
+      this.ano_instalacion &&
+      this.capacidad_amperios &&
+      this.estado &&
+      this.marca
+    );
   }
 
   // Convertir a objeto plano para enviar a la API
@@ -21,18 +29,12 @@ export class TableroElectrico {
     const obj = {
       nombre: this.nombre,
       ubicacion: this.ubicacion,
-      voltaje: this.voltaje,
-      capacidad: this.capacidad,
+      ano_fabricacion: Number(this.ano_fabricacion),
+      ano_instalacion: Number(this.ano_instalacion),
+      capacidad_amperios: Number(this.capacidad_amperios),
+      estado: this.estado,
       marca: this.marca,
-      modelo: this.modelo,
-      fecha_instalacion: this.fecha_instalacion,
     };
-    
-    // Solo incluir id si existe (para actualizaciones)
-    if (this.id) {
-      obj.id = this.id;
-    }
-    
     return obj;
   }
 }

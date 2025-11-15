@@ -19,11 +19,11 @@ export default function CreateTableroScreen({ navigation }) {
   const [formData, setFormData] = useState({
     nombre: '',
     ubicacion: '',
-    voltaje: '',
-    capacidad: '',
+    ano_fabricacion: '',
+    ano_instalacion: '',
+    capacidad_amperios: '',
+    estado: '',
     marca: '',
-    modelo: '',
-    fecha_instalacion: '',
   });
   
   const [loading, setLoading] = useState(false);
@@ -46,8 +46,24 @@ export default function CreateTableroScreen({ navigation }) {
       Alert.alert('Error', 'La ubicación es obligatoria');
       return false;
     }
-    if (!formData.voltaje.trim()) {
-      Alert.alert('Error', 'El voltaje es obligatorio');
+    if (!formData.ano_fabricacion || isNaN(Number(formData.ano_fabricacion))) {
+      Alert.alert('Error', 'El año de fabricación es obligatorio y debe ser un número');
+      return false;
+    }
+    if (!formData.ano_instalacion || isNaN(Number(formData.ano_instalacion))) {
+      Alert.alert('Error', 'El año de instalación es obligatorio y debe ser un número');
+      return false;
+    }
+    if (!formData.capacidad_amperios || isNaN(Number(formData.capacidad_amperios))) {
+      Alert.alert('Error', 'La capacidad en amperios es obligatoria y debe ser un número');
+      return false;
+    }
+    if (!formData.estado.trim()) {
+      Alert.alert('Error', 'El estado es obligatorio');
+      return false;
+    }
+    if (!formData.marca.trim()) {
+      Alert.alert('Error', 'La marca es obligatoria');
       return false;
     }
     return true;
@@ -58,11 +74,11 @@ export default function CreateTableroScreen({ navigation }) {
     setFormData({
       nombre: '',
       ubicacion: '',
-      voltaje: '',
-      capacidad: '',
+      ano_fabricacion: '',
+      ano_instalacion: '',
+      capacidad_amperios: '',
+      estado: '',
       marca: '',
-      modelo: '',
-      fecha_instalacion: '',
     });
   };
 
@@ -123,7 +139,7 @@ export default function CreateTableroScreen({ navigation }) {
             </Text>
             <TextInput
               style={styles.input}
-              placeholder="Ej: Tablero Principal"
+              placeholder="Ej: Tablero Piso 1 - Ala Norte"
               value={formData.nombre}
               onChangeText={(value) => handleInputChange('nombre', value)}
             />
@@ -136,75 +152,84 @@ export default function CreateTableroScreen({ navigation }) {
             </Text>
             <TextInput
               style={styles.input}
-              placeholder="Ej: Edificio A - Planta Baja"
+              placeholder="Ej: Sala de máquinas, Sótano 1"
               value={formData.ubicacion}
               onChangeText={(value) => handleInputChange('ubicacion', value)}
             />
           </View>
 
-          {/* Voltaje */}
+          {/* Año de Fabricación */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>
-              Voltaje <Text style={styles.required}>*</Text>
+              Año de Fabricación <Text style={styles.required}>*</Text>
+            </Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Ej: 2020"
+              keyboardType="numeric"
+              value={formData.ano_fabricacion}
+              onChangeText={(value) => handleInputChange('ano_fabricacion', value)}
+            />
+          </View>
+
+          {/* Año de Instalación */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>
+              Año de Instalación <Text style={styles.required}>*</Text>
+            </Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Ej: 2021"
+              keyboardType="numeric"
+              value={formData.ano_instalacion}
+              onChangeText={(value) => handleInputChange('ano_instalacion', value)}
+            />
+          </View>
+
+          {/* Capacidad en Amperios */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>
+              Capacidad (Amperios) <Text style={styles.required}>*</Text>
+            </Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Ej: 200"
+              keyboardType="numeric"
+              value={formData.capacidad_amperios}
+              onChangeText={(value) => handleInputChange('capacidad_amperios', value)}
+            />
+          </View>
+
+          {/* Estado */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>
+              Estado <Text style={styles.required}>*</Text>
             </Text>
             <View style={styles.pickerContainer}>
               <Picker
-                selectedValue={formData.voltaje}
-                onValueChange={(value) => handleInputChange('voltaje', value)}
+                selectedValue={formData.estado}
+                onValueChange={(value) => handleInputChange('estado', value)}
                 style={styles.picker}
               >
-                <Picker.Item label="Seleccione un voltaje" value="" />
-                <Picker.Item label="110V" value="110V" />
-                <Picker.Item label="220V" value="220V" />
-                <Picker.Item label="380V" value="380V" />
-                <Picker.Item label="440V" value="440V" />
+                <Picker.Item label="Seleccione un estado" value="" />
+                <Picker.Item label="Operativo" value="Operativo" />
+                <Picker.Item label="Mantenimiento" value="Mantenimiento" />
+                <Picker.Item label="Fuera de servicio" value="Fuera de servicio" />
               </Picker>
             </View>
           </View>
 
-          {/* Capacidad */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Capacidad</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Ej: 100A"
-              value={formData.capacidad}
-              onChangeText={(value) => handleInputChange('capacidad', value)}
-            />
-          </View>
-
           {/* Marca */}
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Marca</Text>
+            <Text style={styles.label}>
+              Marca <Text style={styles.required}>*</Text>
+            </Text>
             <TextInput
               style={styles.input}
-              placeholder="Ej: Siemens"
+              placeholder="Ej: Schneider Electric"
               value={formData.marca}
               onChangeText={(value) => handleInputChange('marca', value)}
             />
-          </View>
-
-          {/* Modelo */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Modelo</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Ej: QP-2024"
-              value={formData.modelo}
-              onChangeText={(value) => handleInputChange('modelo', value)}
-            />
-          </View>
-
-          {/* Fecha de Instalación */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Fecha de Instalación</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Ej: 2024-01-15"
-              value={formData.fecha_instalacion}
-              onChangeText={(value) => handleInputChange('fecha_instalacion', value)}
-            />
-            <Text style={styles.hint}>Formato: YYYY-MM-DD</Text>
           </View>
 
           {/* Botones */}

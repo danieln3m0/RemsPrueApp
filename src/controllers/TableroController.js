@@ -30,11 +30,9 @@ class TableroController {
   async createTablero(tableroData) {
     try {
       const tablero = new TableroElectrico(tableroData);
-      
       if (!tablero.isValid()) {
         throw new Error('Datos del tablero inválidos. Verifica los campos obligatorios.');
       }
-
       const response = await api.post('/tableros/', tablero.toJSON());
       return new TableroElectrico(response.data);
     } catch (error) {
@@ -47,11 +45,9 @@ class TableroController {
   async updateTablero(id, tableroData) {
     try {
       const tablero = new TableroElectrico({ ...tableroData, id });
-      
       if (!tablero.isValid()) {
         throw new Error('Datos del tablero inválidos. Verifica los campos obligatorios.');
       }
-
       const response = await api.put(`/tableros/${id}`, tablero.toJSON());
       return new TableroElectrico(response.data);
     } catch (error) {

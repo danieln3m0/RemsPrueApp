@@ -200,6 +200,67 @@ function TablerosStackNavigator() {
   );
 }
 
+// Componente separado para el ícono de la tab
+const TabBarIcon = ({ route, focused, size, theme }) => {
+  let iconName;
+  if (route.name === 'Inicio') {
+    iconName = focused ? 'home' : 'home-outline';
+  } else if (route.name === 'Tableros') {
+    iconName = focused ? 'list' : 'list-outline';
+  } else if (route.name === 'Crear') {
+    iconName = focused ? 'add-circle' : 'add-circle-outline';
+  }
+  const iconColor = focused ? theme.colors.primary : theme.colors.iconSecondary;
+  
+  const scaleValue = React.useRef(new Animated.Value(focused ? 1 : 0)).current;
+  
+  React.useEffect(() => {
+    Animated.spring(scaleValue, {
+      toValue: focused ? 1 : 0,
+      friction: 5,
+      tension: 100,
+      useNativeDriver: true,
+    }).start();
+  }, [focused]);
+  
+  const scale = scaleValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.9, 1.15],
+  });
+  
+  const dropScale = scaleValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 1],
+  });
+  
+  return (
+    <View style={tabStyles.tabIconContainer}>
+      <Animated.View style={{ transform: [{ scale }] }}>
+        <View style={[
+          tabStyles.iconWrapper,
+          focused && { 
+            ...tabStyles.iconWrapperFocused,
+            backgroundColor: `${theme.colors.primary}15`,
+          }
+        ]}>
+          <Ionicons name={iconName} size={size} color={iconColor} />
+          {focused && (
+            <Animated.View 
+              style={[
+                tabStyles.dropIndicator, 
+                { 
+                  backgroundColor: theme.colors.primary,
+                  transform: [{ scale: dropScale }],
+                }
+              ]} 
+            />
+          )}
+        </View>
+      </Animated.View>
+    </View>
+  );
+};
+
 // Bottom Tab Navigator principal
 function MainTabNavigator() {
   const { theme } = useTheme();
@@ -208,65 +269,9 @@ function MainTabNavigator() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
-          if (route.name === 'Inicio') {
-            iconName = focused ? 'home' : 'home-outline';
-          } else if (route.name === 'Tableros') {
-            iconName = focused ? 'list' : 'list-outline';
-          } else if (route.name === 'Crear') {
-            iconName = focused ? 'add-circle' : 'add-circle-outline';
-          }
-          const iconColor = focused ? theme.colors.primary : theme.colors.iconSecondary;
-          
-          const scaleValue = React.useRef(new Animated.Value(focused ? 1 : 0)).current;
-          
-          React.useEffect(() => {
-            Animated.spring(scaleValue, {
-              toValue: focused ? 1 : 0,
-              friction: 5,
-              tension: 100,
-              useNativeDriver: true,
-            }).start();
-          }, [focused]);
-          
-          const scale = scaleValue.interpolate({
-            inputRange: [0, 1],
-            outputRange: [0.9, 1.15],
-          });
-          
-          const dropScale = scaleValue.interpolate({
-            inputRange: [0, 1],
-            outputRange: [0, 1],
-          });
-          
-          return (
-            <View style={styles.tabIconContainer}>
-              <Animated.View style={{ transform: [{ scale }] }}>
-                <View style={[
-                  styles.iconWrapper,
-                  focused && { 
-                    ...styles.iconWrapperFocused,
-                    backgroundColor: `${theme.colors.primary}15`,
-                  }
-                ]}>
-                  <Ionicons name={iconName} size={size} color={iconColor} />
-                  {focused && (
-                    <Animated.View 
-                      style={[
-                        styles.dropIndicator, 
-                        { 
-                          backgroundColor: theme.colors.primary,
-                          transform: [{ scale: dropScale }],
-                        }
-                      ]} 
-                    />
-                  )}
-                </View>
-              </Animated.View>
-            </View>
-          );
-        },
+        tabBarIcon: ({ focused, color, size }) => (
+          <TabBarIcon route={route} focused={focused} size={size} theme={theme} />
+        ),
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.iconSecondary,
         tabBarStyle: {
@@ -366,6 +371,9 @@ const styles = StyleSheet.create({
   flagIcon: {
     fontSize: 26,
   },
+});
+
+const tabStyles = StyleSheet.create({
   tabIconContainer: {
     alignItems: 'center',
     justifyContent: 'center',

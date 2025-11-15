@@ -149,7 +149,7 @@ export default function CreateTableroScreen({ navigation }) {
       >
         <View style={styles.formContainer}>
           <View style={styles.header}>
-            <Ionicons name="add-circle" size={40} color="#2196F3" />
+            <Ionicons name="add-circle" size={40} color="#FF6F00" />
             <Text style={styles.headerTitle}>Nuevo Tablero Eléctrico</Text>
             <Text style={styles.headerSubtitle}>
               Complete los datos del tablero
@@ -290,7 +290,7 @@ export default function CreateTableroScreen({ navigation }) {
               onPress={resetForm}
               disabled={loading}
             >
-              <Ionicons name="refresh" size={20} color="#666" />
+              <Ionicons name="refresh" size={20} color="#FF6F00" />
               <Text style={styles.resetButtonText}>Limpiar Formulario</Text>
             </TouchableOpacity>
           </View>

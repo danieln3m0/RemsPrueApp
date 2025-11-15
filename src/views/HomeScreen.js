@@ -14,7 +14,7 @@ export default function HomeScreen() {
       <View style={styles.content}>
         {/* Avatar/Icono del perfil */}
         <View style={styles.avatarContainer}>
-          <Ionicons name="person-circle" size={120} color="#2196F3" />
+          <Ionicons name="person-circle" size={120} color="#FF6F00" />
         </View>
 
         {/* Información del candidato */}
@@ -22,7 +22,7 @@ export default function HomeScreen() {
           <Text style={styles.title}>Información del Candidato</Text>
           
           <View style={styles.infoRow}>
-            <Ionicons name="person" size={24} color="#2196F3" />
+            <Ionicons name="person" size={24} color="#FF6F00" />
             <View style={styles.infoText}>
               <Text style={styles.label}>Nombre Completo</Text>
               <Text style={styles.value}>Francis Daniel Nemocón</Text>
@@ -30,7 +30,7 @@ export default function HomeScreen() {
           </View>
 
           <View style={styles.infoRow}>
-            <Ionicons name="mail" size={24} color="#2196F3" />
+            <Ionicons name="mail" size={24} color="#FF6F00" />
             <View style={styles.infoText}>
               <Text style={styles.label}>Correo Electrónico</Text>
               <Text style={styles.value}>francis.nemocon@ejemplo.com</Text>
@@ -50,31 +50,31 @@ export default function HomeScreen() {
           <Text style={styles.sectionTitle}>¿Por qué contratarme?</Text>
           <View style={styles.reasonsList}>
             <View style={styles.reasonItem}>
-              <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
+              <Ionicons name="checkmark-circle" size={20} color="#FF6F00" />
               <Text style={styles.reasonText}>
                 Experiencia en desarrollo de aplicaciones móviles multiplataforma
               </Text>
             </View>
             <View style={styles.reasonItem}>
-              <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
+              <Ionicons name="checkmark-circle" size={20} color="#FF6F00" />
               <Text style={styles.reasonText}>
                 Conocimientos sólidos en arquitecturas limpias y mejores prácticas
               </Text>
             </View>
             <View style={styles.reasonItem}>
-              <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
+              <Ionicons name="checkmark-circle" size={20} color="#FF6F00" />
               <Text style={styles.reasonText}>
                 Capacidad para trabajar con APIs REST y gestión de estados
               </Text>
             </View>
             <View style={styles.reasonItem}>
-              <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
+              <Ionicons name="checkmark-circle" size={20} color="#FF6F00" />
               <Text style={styles.reasonText}>
                 Enfoque en la calidad del código y experiencia del usuario
               </Text>
             </View>
             <View style={styles.reasonItem}>
-              <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
+              <Ionicons name="checkmark-circle" size={20} color="#FF6F00" />
               <Text style={styles.reasonText}>
                 Aprendizaje continuo y adaptación a nuevas tecnologías
               </Text>
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: 16,
-    color: '#333',
+    color: '#111',
     fontWeight: '600',
   },
   profileCard: {
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2196F3',
+    color: '#FF6F00',
     marginBottom: 10,
     marginTop: 10,
   },
@@ -216,14 +216,14 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   skillBadge: {
-    backgroundColor: '#E3F2FD',
+    backgroundColor: '#FFF3E0',
     borderRadius: 20,
     paddingHorizontal: 15,
     paddingVertical: 8,
     margin: 5,
   },
   skillText: {
-    color: '#2196F3',
+    color: '#FF6F00',
     fontSize: 13,
     fontWeight: '600',
   },

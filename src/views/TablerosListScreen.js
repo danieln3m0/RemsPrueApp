@@ -111,40 +111,40 @@ export default function TablerosListScreen({ navigation }) {
   const renderTablero = ({ item }) => (
     <View style={styles.card}>
       <View style={styles.cardHeader}>
-        <Ionicons name="flash" size={24} color="#2196F3" />
+        <Ionicons name="flash" size={24} color="#FF6F00" />
         <Text style={styles.cardTitle}>{item.nombre}</Text>
       </View>
       
       <View style={styles.cardBody}>
         <View style={styles.infoRow}>
-          <Ionicons name="location" size={16} color="#666" />
+          <Ionicons name="location" size={16} color="#111" />
           <Text style={styles.infoText}>{item.ubicacion}</Text>
         </View>
         
         {item.estado && (
           <View style={styles.infoRow}>
-            <Ionicons name="information-circle" size={16} color="#666" />
+            <Ionicons name="information-circle" size={16} color="#FF6F00" />
             <Text style={styles.infoText}>Estado: {item.estado}</Text>
           </View>
         )}
         
         {item.capacidad_amperios && (
           <View style={styles.infoRow}>
-            <Ionicons name="speedometer" size={16} color="#666" />
+            <Ionicons name="speedometer" size={16} color="#111" />
             <Text style={styles.infoText}>{item.capacidad_amperios} A</Text>
           </View>
         )}
         
         {item.marca && (
           <View style={styles.infoRow}>
-            <Ionicons name="pricetag" size={16} color="#666" />
+            <Ionicons name="pricetag" size={16} color="#FF6F00" />
             <Text style={styles.infoText}>{item.marca}</Text>
           </View>
         )}
         
         {(item.ano_fabricacion || item.ano_instalacion) && (
           <View style={styles.infoRow}>
-            <Ionicons name="calendar" size={16} color="#666" />
+            <Ionicons name="calendar" size={16} color="#FF6F00" />
             <Text style={styles.infoText}>
               Fab: {item.ano_fabricacion || 'N/A'} | Inst: {item.ano_instalacion || 'N/A'}
             </Text>
@@ -175,7 +175,7 @@ export default function TablerosListScreen({ navigation }) {
   // Componente cuando la lista está vacía
   const renderEmptyList = () => (
     <View style={styles.emptyContainer}>
-      <Ionicons name="folder-open-outline" size={80} color="#ccc" />
+      <Ionicons name="folder-open-outline" size={80} color="#FF6F00" />
       <Text style={styles.emptyText}>No hay tableros registrados</Text>
       <Text style={styles.emptySubtext}>
         Usa la pestaña "Crear" para agregar un nuevo tablero

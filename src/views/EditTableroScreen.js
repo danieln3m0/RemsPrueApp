@@ -161,7 +161,7 @@ export default function EditTableroScreen({ route, navigation }) {
       >
         <View style={styles.formContainer}>
           <View style={styles.header}>
-            <Ionicons name="create" size={40} color="#2196F3" />
+            <Ionicons name="create" size={40} color="#FF6F00" />
             <Text style={styles.headerTitle}>Editar Tablero</Text>
             <Text style={styles.headerSubtitle}>
               Modifica los datos del tablero
@@ -296,7 +296,7 @@ export default function EditTableroScreen({ route, navigation }) {
               onPress={handleCancel}
               disabled={loading}
             >
-              <Ionicons name="close-circle" size={20} color="#666" />
+              <Ionicons name="close-circle" size={20} color="#FF6F00" />
               <Text style={styles.cancelButtonText}>Cancelar</Text>
             </TouchableOpacity>
           </View>

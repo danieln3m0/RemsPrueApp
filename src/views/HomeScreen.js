@@ -67,7 +67,7 @@ export default function HomeScreen() {
             <Ionicons name="mail" size={24} color={theme.colors.primary} />
             <View style={styles.infoText}>
               <Text style={styles.label}>{t('email')}</Text>
-              <Text style={styles.value}>francisdani@gmail.com</Text>
+              <Text style={styles.value}>francisdani143@gmail.com</Text>
             </View>
           </View>
         </View>
@@ -115,29 +115,41 @@ export default function HomeScreen() {
         </View>
 
         {/* Habilidades técnicas */}
-        <View style={styles.skillsCard}>
-          <Text style={styles.sectionTitle}>{t('technicalSkills')}</Text>
-          <View style={styles.skillsContainer}>
-            <View style={styles.skillBadge}>
-              <Text style={styles.skillText}>React Native</Text>
-            </View>
-            <View style={styles.skillBadge}>
-              <Text style={styles.skillText}>JavaScript</Text>
-            </View>
-            <View style={styles.skillBadge}>
-              <Text style={styles.skillText}>REST APIs</Text>
-            </View>
-            <View style={styles.skillBadge}>
-              <Text style={styles.skillText}>MVC Architecture</Text>
-            </View>
-            <View style={styles.skillBadge}>
-              <Text style={styles.skillText}>Navigation</Text>
-            </View>
-            <View style={styles.skillBadge}>
-              <Text style={styles.skillText}>State Management</Text>
-            </View>
-          </View>
-        </View>
+<View style={styles.skillsCard}>
+  <Text style={styles.sectionTitle}>{t('technicalSkills')}</Text>
+  <View style={styles.skillsContainer}>
+    <View style={styles.skillBadge}>
+      <Text style={styles.skillText}>React Native</Text>
+    </View>
+    <View style={styles.skillBadge}>
+      <Text style={styles.skillText}>Next.js</Text>
+    </View>
+    <View style={styles.skillBadge}>
+      <Text style={styles.skillText}>FastAPI</Text>
+    </View>
+    <View style={styles.skillBadge}>
+      <Text style={styles.skillText}>Spring Boot</Text>
+    </View>
+    <View style={styles.skillBadge}>
+      <Text style={styles.skillText}>Node.js</Text>
+    </View>
+    <View style={styles.skillBadge}>
+      <Text style={styles.skillText}>REST APIs</Text>
+    </View>
+    <View style={styles.skillBadge}>
+      <Text style={styles.skillText}>Docker</Text>
+    </View>
+    <View style={styles.skillBadge}>
+      <Text style={styles.skillText}>MySQL</Text>
+    </View>
+    <View style={styles.skillBadge}>
+      <Text style={styles.skillText}>MongoDB</Text>
+    </View>
+    <View style={styles.skillBadge}>
+      <Text style={styles.skillText}>Clean Architecture</Text>
+    </View>
+  </View>
+</View>
       </Animated.View>
     </ScrollView>
   );

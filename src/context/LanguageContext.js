@@ -16,13 +16,13 @@ const translations = {
     professionalProfile: 'Perfil Profesional',
     whyHireMe: '¿Por qué contratarme?',
     technicalSkills: 'Habilidades Técnicas',
-    profileDescription: 'Desarrollador Full Stack con amplia experiencia en React Native y tecnologías móviles. Especializado en la creación de aplicaciones móviles escalables y de alto rendimiento, con sólidos conocimientos en arquitecturas limpias como MVC y patrones de diseño modernos.',
-    reason1: 'Experiencia en desarrollo de aplicaciones móviles multiplataforma',
-    reason2: 'Conocimientos sólidos en arquitecturas limpias y mejores prácticas',
-    reason3: 'Capacidad para trabajar con APIs REST y gestión de estados',
-    reason4: 'Enfoque en la calidad del código y experiencia del usuario',
-    reason5: 'Aprendizaje continuo y adaptación a nuevas tecnologías',
-    
+    profileDescription:'Desarrollador Full Stack en formación con experiencia construyendo aplicaciones web y móviles con tecnologías modernas como React Native, Next.js, FastAPI y Spring Boot. Me caracterizo por crear soluciones escalables, seguras y mantenibles, aplicando arquitecturas limpias y buenas prácticas mientras continúo perfeccionando mis habilidades en backend, mobile e inteligencia artificial.',
+
+    reason1: 'Experiencia desarrollando aplicaciones web y móviles con React, React Native, Angular y Flutter',
+    reason2: 'Dominio de buenas prácticas de arquitectura, diseño limpio y trabajo con microservicios',
+    reason3: 'Experiencia creando y consumiendo APIs REST con FastAPI, Node.js y Spring Boot',
+    reason4: 'Enfoque en código mantenible, seguridad de datos y excelente experiencia de usuario',
+    reason5: 'Aprendizaje continuo en áreas como backend, mobile, machine learning y ciberseguridad',
     // List Screen
     boardsList: 'Lista de Tableros',
     editBoard: 'Editar Tablero',
@@ -99,13 +99,13 @@ const translations = {
     professionalProfile: 'Professional Profile',
     whyHireMe: 'Why hire me?',
     technicalSkills: 'Technical Skills',
-    profileDescription: 'Full Stack Developer with extensive experience in React Native and mobile technologies. Specialized in creating scalable, high-performance mobile applications, with solid knowledge in clean architectures like MVC and modern design patterns.',
-    reason1: 'Experience in cross-platform mobile application development',
-    reason2: 'Strong knowledge in clean architectures and best practices',
-    reason3: 'Ability to work with REST APIs and state management',
-    reason4: 'Focus on code quality and user experience',
-    reason5: 'Continuous learning and adaptation to new technologies',
-    
+    profileDescription:'Full Stack Developer in training with experience building web and mobile applications using modern technologies like React Native, Next.js, FastAPI and Spring Boot. I focus on creating scalable, secure and maintainable solutions, applying clean architecture principles and industry best practices.',
+
+    reason1: 'Experience developing web and mobile applications with React Native, React, Angular and Flutter',
+    reason2: 'Strong understanding of clean architecture, modular design and microservices',
+    reason3: 'Hands-on experience creating and consuming REST APIs with FastAPI, Node.js and Spring Boot',
+    reason4: 'Focus on clean, maintainable code and delivering great user experiences',
+    reason5: 'Continuous learning in backend, mobile development, machine learning and cybersecurity',
     // List Screen
     boardsList: 'Boards List',
     editBoard: 'Edit Board',

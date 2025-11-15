@@ -205,13 +205,19 @@ export default function EditTableroScreen({ route, navigation }) {
             <Text style={styles.label}>
               Año de Fabricación <Text style={styles.required}>*</Text>
             </Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Ej: 2020"
-              keyboardType="numeric"
-              value={formData.ano_fabricacion}
-              onChangeText={(value) => handleInputChange('ano_fabricacion', value)}
-            />
+            <View style={styles.pickerContainer}>
+              <Picker
+                selectedValue={formData.ano_fabricacion}
+                onValueChange={(value) => handleInputChange('ano_fabricacion', value)}
+                style={styles.picker}
+              >
+                <Picker.Item label="Seleccione un año" value="" />
+                {Array.from({ length: 50 }, (_, i) => {
+                  const year = new Date().getFullYear() - i;
+                  return <Picker.Item key={year} label={year.toString()} value={year.toString()} />;
+                })}
+              </Picker>
+            </View>
           </View>
 
           {/* Año de Instalación */}
@@ -219,13 +225,19 @@ export default function EditTableroScreen({ route, navigation }) {
             <Text style={styles.label}>
               Año de Instalación <Text style={styles.required}>*</Text>
             </Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Ej: 2021"
-              keyboardType="numeric"
-              value={formData.ano_instalacion}
-              onChangeText={(value) => handleInputChange('ano_instalacion', value)}
-            />
+            <View style={styles.pickerContainer}>
+              <Picker
+                selectedValue={formData.ano_instalacion}
+                onValueChange={(value) => handleInputChange('ano_instalacion', value)}
+                style={styles.picker}
+              >
+                <Picker.Item label="Seleccione un año" value="" />
+                {Array.from({ length: 50 }, (_, i) => {
+                  const year = new Date().getFullYear() - i;
+                  return <Picker.Item key={year} label={year.toString()} value={year.toString()} />;
+                })}
+              </Picker>
+            </View>
           </View>
 
           {/* Capacidad en Amperios */}

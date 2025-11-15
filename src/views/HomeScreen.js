@@ -9,9 +9,11 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function HomeScreen() {
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
 
@@ -51,12 +53,12 @@ export default function HomeScreen() {
 
         {/* Información personal */}
         <View style={styles.infoCard}>
-          <Text style={styles.title}>Información personal</Text>
+          <Text style={styles.title}>{t('personalInfo')}</Text>
           
           <View style={styles.infoRow}>
             <Ionicons name="person" size={24} color={theme.colors.primary} />
             <View style={styles.infoText}>
-              <Text style={styles.label}>Nombre Completo</Text>
+              <Text style={styles.label}>{t('fullName')}</Text>
               <Text style={styles.value}>Francis Daniel Mamani Silva</Text>
             </View>
           </View>
@@ -64,7 +66,7 @@ export default function HomeScreen() {
           <View style={styles.infoRow}>
             <Ionicons name="mail" size={24} color={theme.colors.primary} />
             <View style={styles.infoText}>
-              <Text style={styles.label}>Correo Electrónico</Text>
+              <Text style={styles.label}>{t('email')}</Text>
               <Text style={styles.value}>francisdani@gmail.com</Text>
             </View>
           </View>
@@ -72,43 +74,41 @@ export default function HomeScreen() {
 
         {/* Perfil Profesional */}
         <View style={styles.profileCard}>
-          <Text style={styles.sectionTitle}>Perfil Profesional</Text>
+          <Text style={styles.sectionTitle}>{t('professionalProfile')}</Text>
           <Text style={styles.description}>
-            Desarrollador Full Stack con amplia experiencia en React Native y tecnologías móviles. 
-            Especializado en la creación de aplicaciones móviles escalables y de alto rendimiento, 
-            con sólidos conocimientos en arquitecturas limpias como MVC y patrones de diseño modernos.
+            {t('profileDescription')}
           </Text>
           
-          <Text style={styles.sectionTitle}>¿Por qué contratarme?</Text>
+          <Text style={styles.sectionTitle}>{t('whyHireMe')}</Text>
           <View style={styles.reasonsList}>
             <View style={styles.reasonItem}>
               <Ionicons name="checkmark-circle" size={20} color={theme.colors.primary} />
               <Text style={styles.reasonText}>
-                Experiencia en desarrollo de aplicaciones móviles multiplataforma
+                {t('reason1')}
               </Text>
             </View>
             <View style={styles.reasonItem}>
               <Ionicons name="checkmark-circle" size={20} color={theme.colors.primary} />
               <Text style={styles.reasonText}>
-                Conocimientos sólidos en arquitecturas limpias y mejores prácticas
+                {t('reason2')}
               </Text>
             </View>
             <View style={styles.reasonItem}>
               <Ionicons name="checkmark-circle" size={20} color={theme.colors.primary} />
               <Text style={styles.reasonText}>
-                Capacidad para trabajar con APIs REST y gestión de estados
+                {t('reason3')}
               </Text>
             </View>
             <View style={styles.reasonItem}>
               <Ionicons name="checkmark-circle" size={20} color={theme.colors.primary} />
               <Text style={styles.reasonText}>
-                Enfoque en la calidad del código y experiencia del usuario
+                {t('reason4')}
               </Text>
             </View>
             <View style={styles.reasonItem}>
               <Ionicons name="checkmark-circle" size={20} color={theme.colors.primary} />
               <Text style={styles.reasonText}>
-                Aprendizaje continuo y adaptación a nuevas tecnologías
+                {t('reason5')}
               </Text>
             </View>
           </View>
@@ -116,7 +116,7 @@ export default function HomeScreen() {
 
         {/* Habilidades técnicas */}
         <View style={styles.skillsCard}>
-          <Text style={styles.sectionTitle}>Habilidades Técnicas</Text>
+          <Text style={styles.sectionTitle}>{t('technicalSkills')}</Text>
           <View style={styles.skillsContainer}>
             <View style={styles.skillBadge}>
               <Text style={styles.skillText}>React Native</Text>

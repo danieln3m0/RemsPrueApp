@@ -16,10 +16,12 @@ import { Picker } from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
 import { useUpdateTablero } from '../hooks/useTableros';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function EditTableroScreen({ route, navigation }) {
   const { tablero } = route.params;
   const { theme } = useTheme();
+  const { t } = useLanguage();
   
   const [formData, setFormData] = useState({
     nombre: '',
@@ -80,31 +82,31 @@ export default function EditTableroScreen({ route, navigation }) {
   // Validar formulario
   const validateForm = () => {
     if (!formData.nombre.trim()) {
-      Alert.alert('Error', 'El nombre es obligatorio');
+      Alert.alert(t('validationError'), t('allFieldsRequired'));
       return false;
     }
     if (!formData.ubicacion.trim()) {
-      Alert.alert('Error', 'La ubicación es obligatoria');
+      Alert.alert(t('validationError'), t('allFieldsRequired'));
       return false;
     }
     if (!formData.ano_fabricacion || isNaN(Number(formData.ano_fabricacion))) {
-      Alert.alert('Error', 'El año de fabricación es obligatorio y debe ser un número');
+      Alert.alert(t('validationError'), t('allFieldsRequired'));
       return false;
     }
     if (!formData.ano_instalacion || isNaN(Number(formData.ano_instalacion))) {
-      Alert.alert('Error', 'El año de instalación es obligatorio y debe ser un número');
+      Alert.alert(t('validationError'), t('allFieldsRequired'));
       return false;
     }
     if (!formData.capacidad_amperios || isNaN(Number(formData.capacidad_amperios))) {
-      Alert.alert('Error', 'La capacidad en amperios es obligatoria y debe ser un número');
+      Alert.alert(t('validationError'), t('allFieldsRequired'));
       return false;
     }
     if (!formData.estado.trim()) {
-      Alert.alert('Error', 'El estado es obligatorio');
+      Alert.alert(t('validationError'), t('allFieldsRequired'));
       return false;
     }
     if (!formData.marca.trim()) {
-      Alert.alert('Error', 'La marca es obligatoria');
+      Alert.alert(t('validationError'), t('allFieldsRequired'));
       return false;
     }
     return true;
@@ -117,8 +119,8 @@ export default function EditTableroScreen({ route, navigation }) {
       {
         onSuccess: () => {
           Alert.alert(
-            'Éxito',
-            'Tablero actualizado correctamente',
+            t('success'),
+            t('updatedSuccessfully'),
             [
               {
                 text: 'OK',
@@ -130,7 +132,7 @@ export default function EditTableroScreen({ route, navigation }) {
           );
         },
         onError: (error) => {
-          Alert.alert('Error', error.message || 'No se pudo actualizar el tablero');
+          Alert.alert(t('error'), error.message || t('deleteError'));
         },
       }
     );
@@ -142,15 +144,15 @@ export default function EditTableroScreen({ route, navigation }) {
       return;
     }
     Alert.alert(
-      'Confirmar Actualización',
-      '¿Está seguro de que desea guardar los cambios?',
+      t('confirmUpdate'),
+      t('updateMessage'),
       [
         {
-          text: 'Cancelar',
+          text: t('cancel'),
           style: 'cancel',
         },
         {
-          text: 'Confirmar',
+          text: t('confirm'),
           onPress: submitEdit,
         },
       ]
@@ -160,15 +162,15 @@ export default function EditTableroScreen({ route, navigation }) {
   // Cancelar y volver atrás
   const handleCancel = () => {
     Alert.alert(
-      'Cancelar',
-      '¿Deseas descartar los cambios?',
+      t('discardChanges'),
+      t('discardMessage'),
       [
         {
-          text: 'No',
+          text: t('no'),
           style: 'cancel',
         },
         {
-          text: 'Sí',
+          text: t('yes'),
           onPress: () => navigation.goBack(),
         },
       ]
@@ -198,26 +200,26 @@ export default function EditTableroScreen({ route, navigation }) {
         >
           <View style={styles.header}>
             <Ionicons name="create" size={40} color={theme.colors.primary} />
-            <Text style={styles.headerTitle}>Editar Tablero</Text>
+            <Text style={styles.headerTitle}>{t('editingBoard')}</Text>
             <Text style={styles.headerSubtitle}>
-              Modifica los datos del tablero
+              {t('modifyData')}
             </Text>
           </View>
 
           {/* ID del tablero (solo lectura) */}
           <View style={styles.infoBox}>
-            <Text style={styles.infoLabel}>ID del Tablero:</Text>
+            <Text style={styles.infoLabel}>{t('boardId')}:</Text>
             <Text style={styles.infoValue}>{tablero.id}</Text>
           </View>
 
           {/* Nombre */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>
-              Nombre <Text style={styles.required}>*</Text>
+              {t('name')} <Text style={styles.required}>*</Text>
             </Text>
             <TextInput
               style={styles.input}
-              placeholder="Ej: Tablero Piso 1 - Ala Norte"
+              placeholder={t('namePlaceholder')}
               placeholderTextColor={theme.colors.textSecondary}
               value={formData.nombre}
               onChangeText={(value) => handleInputChange('nombre', value)}
@@ -227,11 +229,11 @@ export default function EditTableroScreen({ route, navigation }) {
           {/* Ubicación */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>
-              Ubicación <Text style={styles.required}>*</Text>
+              {t('location')} <Text style={styles.required}>*</Text>
             </Text>
             <TextInput
               style={styles.input}
-              placeholder="Ej: Sala de máquinas, Sótano 1"
+              placeholder={t('locationPlaceholder')}
               placeholderTextColor={theme.colors.textSecondary}
               value={formData.ubicacion}
               onChangeText={(value) => handleInputChange('ubicacion', value)}
@@ -241,7 +243,7 @@ export default function EditTableroScreen({ route, navigation }) {
           {/* Año de Fabricación */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>
-              Año de Fabricación <Text style={styles.required}>*</Text>
+              {t('manufacturingYear')} <Text style={styles.required}>*</Text>
             </Text>
             <View style={styles.pickerContainer}>
               <Picker
@@ -249,7 +251,7 @@ export default function EditTableroScreen({ route, navigation }) {
                 onValueChange={(value) => handleInputChange('ano_fabricacion', value)}
                 style={styles.picker}
               >
-                <Picker.Item label="Seleccione un año" value="" />
+                <Picker.Item label={t('selectYear')} value="" />
                 {Array.from({ length: 50 }, (_, i) => {
                   const year = new Date().getFullYear() - i;
                   return <Picker.Item key={year} label={year.toString()} value={year.toString()} />;
@@ -261,7 +263,7 @@ export default function EditTableroScreen({ route, navigation }) {
           {/* Año de Instalación */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>
-              Año de Instalación <Text style={styles.required}>*</Text>
+              {t('installationYear')} <Text style={styles.required}>*</Text>
             </Text>
             <View style={styles.pickerContainer}>
               <Picker
@@ -269,7 +271,7 @@ export default function EditTableroScreen({ route, navigation }) {
                 onValueChange={(value) => handleInputChange('ano_instalacion', value)}
                 style={styles.picker}
               >
-                <Picker.Item label="Seleccione un año" value="" />
+                <Picker.Item label={t('selectYear')} value="" />
                 {Array.from({ length: 50 }, (_, i) => {
                   const year = new Date().getFullYear() - i;
                   return <Picker.Item key={year} label={year.toString()} value={year.toString()} />;
@@ -281,11 +283,11 @@ export default function EditTableroScreen({ route, navigation }) {
           {/* Capacidad en Amperios */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>
-              Capacidad (Amperios) <Text style={styles.required}>*</Text>
+              {t('capacity')} <Text style={styles.required}>*</Text>
             </Text>
             <TextInput
               style={styles.input}
-              placeholder="Ej: 200"
+              placeholder={t('capacityPlaceholder')}
               placeholderTextColor={theme.colors.textSecondary}
               keyboardType="numeric"
               value={formData.capacidad_amperios}
@@ -296,7 +298,7 @@ export default function EditTableroScreen({ route, navigation }) {
           {/* Estado */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>
-              Estado <Text style={styles.required}>*</Text>
+              {t('status')} <Text style={styles.required}>*</Text>
             </Text>
             <View style={styles.pickerContainer}>
               <Picker
@@ -304,10 +306,10 @@ export default function EditTableroScreen({ route, navigation }) {
                 onValueChange={(value) => handleInputChange('estado', value)}
                 style={styles.picker}
               >
-                <Picker.Item label="Seleccione un estado" value="" />
-                <Picker.Item label="Operativo" value="Operativo" />
-                <Picker.Item label="Mantenimiento" value="Mantenimiento" />
-                <Picker.Item label="Fuera de servicio" value="Fuera de servicio" />
+                <Picker.Item label={t('selectOption')} value="" />
+                <Picker.Item label={t('statusOperational')} value="Operativo" />
+                <Picker.Item label={t('statusMaintenance')} value="Mantenimiento" />
+                <Picker.Item label={t('statusOutOfService')} value="Fuera de servicio" />
               </Picker>
             </View>
           </View>
@@ -315,11 +317,11 @@ export default function EditTableroScreen({ route, navigation }) {
           {/* Marca */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>
-              Marca <Text style={styles.required}>*</Text>
+              {t('brand')} <Text style={styles.required}>*</Text>
             </Text>
             <TextInput
               style={styles.input}
-              placeholder="Ej: Schneider Electric"
+              placeholder={t('brandPlaceholder')}
               placeholderTextColor={theme.colors.textSecondary}
               value={formData.marca}
               onChangeText={(value) => handleInputChange('marca', value)}
@@ -338,7 +340,7 @@ export default function EditTableroScreen({ route, navigation }) {
               ) : (
                 <>
                   <Ionicons name="checkmark-circle" size={20} color="white" />
-                  <Text style={styles.buttonText}>Actualizar</Text>
+                  <Text style={styles.buttonText}>{t('update')}</Text>
                 </>
               )}
             </TouchableOpacity>
@@ -349,12 +351,12 @@ export default function EditTableroScreen({ route, navigation }) {
               disabled={updateMutation.isPending}
             >
               <Ionicons name="close-circle" size={20} color={theme.colors.primary} />
-              <Text style={styles.cancelButtonText}>Cancelar</Text>
+              <Text style={styles.cancelButtonText}>{t('cancel')}</Text>
             </TouchableOpacity>
           </View>
 
           <Text style={styles.requiredNote}>
-            <Text style={styles.required}>*</Text> Campos obligatorios
+            <Text style={styles.required}>*</Text> {t('requiredFields')}
           </Text>
         </Animated.View>
       </ScrollView>

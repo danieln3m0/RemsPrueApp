@@ -15,9 +15,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTableros, useDeleteTablero } from '../hooks/useTableros';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function TablerosListScreen({ navigation }) {
   const { theme } = useTheme();
+  const { t } = useLanguage();
   // React Query hooks
   const { data: tableros = [], isLoading, isError, error, refetch } = useTableros();
   const deleteMutation = useDeleteTablero();
@@ -32,7 +34,7 @@ export default function TablerosListScreen({ navigation }) {
   // Mostrar error si ocurre
   useEffect(() => {
     if (isError) {
-      Alert.alert('Error', error?.message || 'No se pudieron cargar los tableros');
+      Alert.alert(t('error'), error?.message || t('deleteError'));
     }
   }, [isError, error]);
 
@@ -41,20 +43,20 @@ export default function TablerosListScreen({ navigation }) {
     console.log('Intentando eliminar tablero:', tablero.id, tablero.nombre);
     
     if (!tablero.id) {
-      Alert.alert('Error', 'El tablero no tiene un ID válido');
+      Alert.alert(t('error'), 'El tablero no tiene un ID válido');
       return;
     }
     
     // Usar confirm() para web, que funciona en todos los navegadores
     const confirmDelete = Platform.OS === 'web' 
-      ? window.confirm(`¿Estás seguro de eliminar el tablero "${tablero.nombre}"?\nID: ${tablero.id}`)
+      ? window.confirm(`${t('deleteMessage')} "${tablero.nombre}"?\nID: ${tablero.id}`)
       : await new Promise((resolve) => {
           Alert.alert(
-            'Confirmar Eliminación',
-            `¿Estás seguro de eliminar el tablero "${tablero.nombre}"?\nID: ${tablero.id}`,
+            t('confirmDelete'),
+            `${t('deleteMessage')} "${tablero.nombre}"?\nID: ${tablero.id}`,
             [
-              { text: 'Cancelar', style: 'cancel', onPress: () => resolve(false) },
-              { text: 'Eliminar', style: 'destructive', onPress: () => resolve(true) },
+              { text: t('cancel'), style: 'cancel', onPress: () => resolve(false) },
+              { text: t('delete'), style: 'destructive', onPress: () => resolve(true) },
             ]
           );
         });
@@ -68,17 +70,17 @@ export default function TablerosListScreen({ navigation }) {
     deleteMutation.mutate(tablero.id, {
       onSuccess: () => {
         if (Platform.OS === 'web') {
-          alert('Tablero eliminado correctamente');
+          alert(t('deletedSuccessfully'));
         } else {
-          Alert.alert('Éxito', 'Tablero eliminado correctamente');
+          Alert.alert(t('success'), t('deletedSuccessfully'));
         }
       },
       onError: (error) => {
         console.error('Error al eliminar:', error);
         if (Platform.OS === 'web') {
-          alert(`Error al eliminar: ${error.message || 'No se pudo eliminar el tablero'}`);
+          alert(`${t('error')}: ${error.message || t('deleteError')}`);
         } else {
-          Alert.alert('Error al eliminar', error.message || 'No se pudo eliminar el tablero');
+          Alert.alert(t('error'), error.message || t('deleteError'));
         }
       },
     });
@@ -171,7 +173,7 @@ export default function TablerosListScreen({ navigation }) {
             activeOpacity={0.7}
           >
             <Ionicons name="create" size={20} color="white" />
-            <Text style={styles.buttonText}>Editar</Text>
+            <Text style={styles.buttonText}>{t('edit')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -180,7 +182,7 @@ export default function TablerosListScreen({ navigation }) {
             activeOpacity={0.7}
           >
             <Ionicons name="trash" size={20} color="white" />
-            <Text style={styles.buttonText}>Eliminar</Text>
+            <Text style={styles.buttonText}>{t('delete')}</Text>
           </TouchableOpacity>
         </View>
       </Animated.View>
@@ -196,9 +198,9 @@ export default function TablerosListScreen({ navigation }) {
   const renderEmptyList = () => (
     <View style={styles.emptyContainer}>
       <Ionicons name="folder-open-outline" size={80} color={theme.colors.primary} />
-      <Text style={styles.emptyText}>No hay tableros registrados</Text>
+      <Text style={styles.emptyText}>{t('noBoards')}</Text>
       <Text style={styles.emptySubtext}>
-        Usa la pestaña "Crear" para agregar un nuevo tablero
+        {t('noBoardsSubtext')}
       </Text>
     </View>
   );
@@ -209,7 +211,7 @@ export default function TablerosListScreen({ navigation }) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
-        <Text style={styles.loadingText}>Cargando tableros...</Text>
+        <Text style={styles.loadingText}>{t('loading')}</Text>
       </View>
     );
   }

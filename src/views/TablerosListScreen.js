@@ -8,6 +8,7 @@ import {
   Alert,
   ActivityIndicator,
   RefreshControl,
+  Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -51,31 +52,54 @@ export default function TablerosListScreen({ navigation }) {
   };
 
   // Función para eliminar un tablero
-  const handleDelete = (tablero) => {
-    Alert.alert(
-      'Confirmar Eliminación',
-      `¿Estás seguro de eliminar el tablero "${tablero.nombre}"?`,
-      [
-        {
-          text: 'Cancelar',
-          style: 'cancel',
-        },
-        {
-          text: 'Eliminar',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await TableroController.deleteTablero(tablero.id);
-              Alert.alert('Éxito', 'Tablero eliminado correctamente');
-              // Recargar la lista
-              loadTableros();
-            } catch (error) {
-              Alert.alert('Error', error.message || 'No se pudo eliminar el tablero');
-            }
-          },
-        },
-      ]
-    );
+  const handleDelete = async (tablero) => {
+    console.log('Intentando eliminar tablero:', tablero.id, tablero.nombre);
+    
+    if (!tablero.id) {
+      Alert.alert('Error', 'El tablero no tiene un ID válido');
+      return;
+    }
+    
+    // Usar confirm() para web, que funciona en todos los navegadores
+    const confirmDelete = Platform.OS === 'web' 
+      ? window.confirm(`¿Estás seguro de eliminar el tablero "${tablero.nombre}"?\nID: ${tablero.id}`)
+      : await new Promise((resolve) => {
+          Alert.alert(
+            'Confirmar Eliminación',
+            `¿Estás seguro de eliminar el tablero "${tablero.nombre}"?\nID: ${tablero.id}`,
+            [
+              { text: 'Cancelar', style: 'cancel', onPress: () => resolve(false) },
+              { text: 'Eliminar', style: 'destructive', onPress: () => resolve(true) },
+            ]
+          );
+        });
+    
+    if (!confirmDelete) {
+      console.log('Eliminación cancelada por el usuario');
+      return;
+    }
+    
+    try {
+      console.log('Eliminando tablero con ID:', tablero.id);
+      await TableroController.deleteTablero(tablero.id);
+      
+      if (Platform.OS === 'web') {
+        alert('Tablero eliminado correctamente');
+      } else {
+        Alert.alert('Éxito', 'Tablero eliminado correctamente');
+      }
+      
+      // Recargar la lista
+      loadTableros();
+    } catch (error) {
+      console.error('Error al eliminar:', error);
+      
+      if (Platform.OS === 'web') {
+        alert(`Error al eliminar: ${error.message || 'No se pudo eliminar el tablero'}`);
+      } else {
+        Alert.alert('Error al eliminar', error.message || 'No se pudo eliminar el tablero');
+      }
+    }
   };
 
   // Función para navegar a la pantalla de edición
@@ -97,10 +121,17 @@ export default function TablerosListScreen({ navigation }) {
           <Text style={styles.infoText}>{item.ubicacion}</Text>
         </View>
         
-        {item.voltaje && (
+        {item.estado && (
+          <View style={styles.infoRow}>
+            <Ionicons name="information-circle" size={16} color="#666" />
+            <Text style={styles.infoText}>Estado: {item.estado}</Text>
+          </View>
+        )}
+        
+        {item.capacidad_amperios && (
           <View style={styles.infoRow}>
             <Ionicons name="speedometer" size={16} color="#666" />
-            <Text style={styles.infoText}>{item.voltaje}</Text>
+            <Text style={styles.infoText}>{item.capacidad_amperios} A</Text>
           </View>
         )}
         
@@ -108,6 +139,15 @@ export default function TablerosListScreen({ navigation }) {
           <View style={styles.infoRow}>
             <Ionicons name="pricetag" size={16} color="#666" />
             <Text style={styles.infoText}>{item.marca}</Text>
+          </View>
+        )}
+        
+        {(item.ano_fabricacion || item.ano_instalacion) && (
+          <View style={styles.infoRow}>
+            <Ionicons name="calendar" size={16} color="#666" />
+            <Text style={styles.infoText}>
+              Fab: {item.ano_fabricacion || 'N/A'} | Inst: {item.ano_instalacion || 'N/A'}
+            </Text>
           </View>
         )}
       </View>

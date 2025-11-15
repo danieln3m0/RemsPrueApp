@@ -1,7 +1,8 @@
 // Modelo para Tablero Eléctrico
 export class TableroElectrico {
   constructor(data = {}) {
-    this.id = data.id || data._id || null;
+    // Normaliza el id para que siempre esté disponible como this.id
+    this.id = data.id || data._id || data.uuid || null;
     this.nombre = data.nombre || '';
     this.ubicacion = data.ubicacion || '';
     this.ano_fabricacion = data.ano_fabricacion || '';

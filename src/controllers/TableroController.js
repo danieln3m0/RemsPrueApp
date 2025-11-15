@@ -29,7 +29,14 @@ class TableroController {
   // POST /tableros/ - Crear un nuevo tablero
   async createTablero(tableroData) {
     try {
-      const tablero = new TableroElectrico(tableroData);
+      // Forzar conversión de campos numéricos
+      const data = {
+        ...tableroData,
+        ano_fabricacion: Number(tableroData.ano_fabricacion),
+        ano_instalacion: Number(tableroData.ano_instalacion),
+        capacidad_amperios: Number(tableroData.capacidad_amperios),
+      };
+      const tablero = new TableroElectrico(data);
       if (!tablero.isValid()) {
         throw new Error('Datos del tablero inválidos. Verifica los campos obligatorios.');
       }
@@ -59,10 +66,13 @@ class TableroController {
   // DELETE /tableros/{tablero_id} - Eliminar un tablero
   async deleteTablero(id) {
     try {
+      console.log(`Llamando DELETE /tableros/${id}`);
       const response = await api.delete(`/tableros/${id}`);
+      console.log('Respuesta DELETE:', response.status, response.data);
       return response.data;
     } catch (error) {
       console.error(`Error al eliminar tablero ${id}:`, error);
+      console.error('Error completo:', error.response?.data);
       throw this.handleError(error);
     }
   }
@@ -71,9 +81,22 @@ class TableroController {
   handleError(error) {
     if (error.response) {
       // Error de respuesta del servidor
-      const message = error.response.data?.detail || 
-                     error.response.data?.message || 
-                     `Error del servidor: ${error.response.status}`;
+      let message = '';
+      if (typeof error.response.data === 'string') {
+        message = error.response.data;
+      } else if (error.response.data?.detail) {
+        message = error.response.data.detail;
+      } else if (error.response.data?.message) {
+        message = error.response.data.message;
+      } else if (Array.isArray(error.response.data)) {
+        // Errores de validación tipo lista
+        message = error.response.data.map(e => e.msg || e.message || JSON.stringify(e)).join('\n');
+      } else if (typeof error.response.data === 'object') {
+        // Mostrar todos los errores de validación
+        message = Object.values(error.response.data).flat().join('\n');
+      } else {
+        message = `Error del servidor: ${error.response.status}`;
+      }
       return new Error(message);
     } else if (error.request) {
       // No se recibió respuesta

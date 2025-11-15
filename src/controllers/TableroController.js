@@ -48,14 +48,17 @@ class TableroController {
     }
   }
 
-  // PUT /tableros/{tablero_id} - Actualizar un tablero
+  // PATCH /tableros/{tablero_id} - Actualizar un tablero (parcial)
   async updateTablero(id, tableroData) {
     try {
-      const tablero = new TableroElectrico({ ...tableroData, id });
-      if (!tablero.isValid()) {
-        throw new Error('Datos del tablero inválidos. Verifica los campos obligatorios.');
-      }
-      const response = await api.put(`/tableros/${id}`, tablero.toJSON());
+      // Forzar conversión de campos numéricos
+      const data = {
+        ...tableroData,
+        ano_fabricacion: Number(tableroData.ano_fabricacion),
+        ano_instalacion: Number(tableroData.ano_instalacion),
+        capacidad_amperios: Number(tableroData.capacidad_amperios),
+      };
+      const response = await api.patch(`/tableros/${id}`, data);
       return new TableroElectrico(response.data);
     } catch (error) {
       console.error(`Error al actualizar tablero ${id}:`, error);
